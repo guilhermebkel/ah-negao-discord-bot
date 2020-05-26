@@ -1,12 +1,21 @@
 FROM node:current-stretch
-RUN mkdir -p /gallery/api
-WORKDIR /gallery/api
-COPY ./package.json /gallery/api
-COPY ./package-lock.json /gallery/api
+
+RUN mkdir -p /usr/src/app
+
+WORKDIR /usr/src/app
+
+COPY ./package.json /usr/src/app
+COPY ./package-lock.json /usr/src/app
+
 ENV NODE_ENV production
+
 RUN npm ci
-COPY . /gallery/api
+
+COPY . /usr/src/app
+
 RUN npm run build
+
 ENV PORT 80
 EXPOSE 80 3667
+
 CMD [ "npm", "run", "start" ]
