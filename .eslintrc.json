@@ -1,0 +1,72 @@
+{
+	"env": {
+		"es6": true,
+		"node": true,
+		"jest": true
+	},
+	"extends": [
+		"airbnb-base",
+		"plugin:@typescript-eslint/recommended",
+		"prettier/@typescript-eslint"
+	],
+	"globals": {
+		"Atomics": "readonly",
+		"SharedArrayBuffer": "readonly"
+	},
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"ecmaVersion": 2020,
+		"sourceType": "module",
+		"project": "./tsconfig.json"
+	},
+	"plugins": [
+		"@typescript-eslint",
+		"prettier"
+	],
+	"rules": {
+		"no-underscore-dangle": "off",
+		"class-methods-use-this": "off",
+		"no-await-in-loop": "off",
+		"import/prefer-default-export": "off",
+		"import/extensions": [
+			"error",
+			"ignorePackages",
+			{
+				"ts": "never"
+			}
+		],
+		"quotes": ["error", "double"],
+		"indent": ["error", "tab"],
+		"no-tabs": ["off"],
+		"semi": ["off"],
+		"import/no-unresolved": ["off"],
+		"@typescript-eslint/no-namespace": ["off"],
+		"comma-dangle": ["off"],
+		// Need to be removed all below here.
+		"no-param-reassign": ["off"],
+		"no-bitwise": ["off"],
+		"@typescript-eslint/no-explicit-any": ["off"],
+		"@typescript-eslint/explicit-function-return-type": ["off"],
+		"@typescript-eslint/no-empty-function": ["off"],
+		"no-console": ["off"]
+	},
+	"overrides": [
+		{
+			"files": ["*.js"],
+			"rules": {
+				"@typescript-eslint/no-var-requires": "off"
+			}
+		}
+	],
+	"settings": {
+		"import/extensions": [".ts", ".js"],
+		"import/parsers": {
+			"@typescript-eslint/parser": [".ts", ".js"]
+		},
+		"import/resolver": {
+			"typescript": {
+				"alwaysTryTypes": true
+			}
+		}
+	}
+}
