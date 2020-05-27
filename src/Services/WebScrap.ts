@@ -8,7 +8,7 @@ class WebScrapService {
 		return data
 	}
 
-	getScraper(pageData: string): CheerioStatic {
+	getScraper(pageData: string) {
 		return cheerio.load(pageData)
 	}
 }
