@@ -54,12 +54,14 @@
   },
   "homepage": "https://github.com/guilhermebkel/node-workers-zip#readme",
   "dependencies": {
+    "@types/node-cron": "^2.0.3",
     "axios": "^0.19.2",
     "cheerio": "^1.0.0-rc.3",
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
     "lodash": "^4.17.15",
     "module-alias": "^2.2.2",
+    "node-cron": "^2.0.3",
     "ts-node": "^8.10.1",
     "tsconfig-paths": "^3.9.0"
   },

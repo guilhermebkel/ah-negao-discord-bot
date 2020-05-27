@@ -11,6 +11,7 @@ class Discord {
 		Discord.login()
 		Discord.setupListeners()
 		await Discord.onReady()
+		console.log("Discord Bot is online...")
 	}
 
 	static login(): void {

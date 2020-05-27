@@ -1,16 +1,24 @@
-import { Message, TextChannel } from "discord.js"
+import { Message, TextChannel, ChannelLogsQueryOptions } from "discord.js"
 
 import Discord from "~/Core/Discord"
 
 class DiscordService {
-	async getChannelMessages(channelName: string): Promise<string[]> {
-		const channel = await this.getChannel<TextChannel>(channelName)
+	async getChannelMessages(
+		channelName: string,
+		filter: ChannelLogsQueryOptions
+	): Promise<string[]> {
+		try {
+			const channel = await this.getChannel<TextChannel>(channelName)
 
-		const rawMessages = await channel.messages.fetch({ limit: 100 })
+			const rawMessages = await channel.messages.fetch(filter)
 
-		const messages = rawMessages.map((message) => message.content)
+			const messages = rawMessages.map((message) => message.content)
 
-		return messages
+			return messages
+		} catch (error) {
+			console.error(error)
+			return []
+		}
 	}
 
 	async sendChannelMessage(channelName: string, message: string): Promise<boolean> {

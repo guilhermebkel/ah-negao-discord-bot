@@ -1,7 +1,7 @@
-import CheckNewPostsCron from "~/Crons/CheckNewPosts"
+import PublishAhNegaoPostsOnDiscordCron from "~/Crons/PublishAhNegaoPostsOnDiscord"
 
 const crons = [
-	CheckNewPostsCron
+	PublishAhNegaoPostsOnDiscordCron
 ]
 
 export default crons

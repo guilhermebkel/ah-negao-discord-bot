@@ -6,10 +6,7 @@ class App {
 		console.log(`Starting... [${process.env.NODE_ENV}]`)
 
 		await Discord.setup()
-		console.log("Discord Bot is online...")
-
 		Cron.setup()
-		console.log("Cron jobs scheduled...")
 	}
 }
 

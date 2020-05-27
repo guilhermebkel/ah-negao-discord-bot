@@ -1,6 +1,7 @@
 import WebScrapService from "~/Services/WebScrap"
 
 import TypeUtil from "~/Utils/Type"
+import LinkUtil from "~/Utils/Link"
 
 import ahNegaoConfig from "~/Config/ah-negao"
 
@@ -19,7 +20,9 @@ class AhNegaoService {
 		rawPostAttachments.forEach((attachment) => {
 			attachment.children.forEach((attachmentChild) => {
 				if (attachmentChild.name === "iframe" || attachmentChild.name === "img") {
-					attachmentUrls.push(attachmentChild?.attribs?.src)
+					const url = LinkUtil.formatLink(attachmentChild?.attribs?.src)
+
+					attachmentUrls.push(url)
 				}
 			})
 		})
@@ -27,8 +30,11 @@ class AhNegaoService {
 		return attachmentUrls
 	}
 
-	async getPagePostsDay(page = 1): Promise<number> {
-		let day = 999
+	/**
+	 * Gets the max day of a post page
+	 */
+	async getPagePostsUpperDay(page = 1): Promise<number> {
+		let day = 0
 
 		const pageUrl = `${ahNegaoConfig.pageBaseUrl}${page}`
 
@@ -42,7 +48,7 @@ class AhNegaoService {
 			pagePostDay.children.forEach((pagePostDayChild) => {
 				const isValidNumber = TypeUtil.isNumber(pagePostDayChild?.data)
 
-				if (isValidNumber && +pagePostDayChild?.data < day) {
+				if (isValidNumber && +pagePostDayChild?.data > day) {
 					day = +pagePostDayChild?.data
 				}
 			})
