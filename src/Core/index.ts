@@ -1,4 +1,5 @@
-import Discord from "@Core/Discord"
+import Discord from "~/Core/Discord"
+import Cron from "~/Core/Cron"
 
 class App {
 	async boot() {
@@ -6,6 +7,9 @@ class App {
 
 		await Discord.setup()
 		console.log("Discord Bot is online...")
+
+		Cron.setup()
+		console.log("Cron jobs scheduled...")
 	}
 }
 

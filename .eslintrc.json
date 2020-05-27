@@ -28,13 +28,6 @@
 		"class-methods-use-this": "off",
 		"no-await-in-loop": "off",
 		"import/prefer-default-export": "off",
-		"import/extensions": [
-			"error",
-			"ignorePackages",
-			{
-				"ts": "never"
-			}
-		],
 		"quotes": ["error", "double"],
 		"indent": ["error", "tab"],
 		"no-tabs": ["off"],
@@ -42,6 +35,7 @@
 		"import/no-unresolved": ["off"],
 		"@typescript-eslint/no-namespace": ["off"],
 		"comma-dangle": ["off"],
+		"import/extensions": ["off"],
 		// Need to be removed all below here.
 		"no-param-reassign": ["off"],
 		"no-bitwise": ["off"],

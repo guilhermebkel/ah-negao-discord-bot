@@ -17,6 +17,7 @@
     "build": "tsc"
   },
   "devDependencies": {
+    "@types/cheerio": "^0.22.18",
     "@types/jest": "^25.2.3",
     "@types/lodash": "^4.14.152",
     "@types/node": "^14.0.1",
@@ -39,7 +40,6 @@
     "prettier": "^2.0.5",
     "sucrase": "^3.15.0",
     "ts-jest": "^26.0.0",
-    "tsconfig-paths": "^3.9.0",
     "typescript": "^3.9.2"
   },
   "repository": {
@@ -54,15 +54,16 @@
   },
   "homepage": "https://github.com/guilhermebkel/node-workers-zip#readme",
   "dependencies": {
+    "axios": "^0.19.2",
+    "cheerio": "^1.0.0-rc.3",
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
     "lodash": "^4.17.15",
     "module-alias": "^2.2.2",
-    "ts-node": "^8.10.1"
+    "ts-node": "^8.10.1",
+    "tsconfig-paths": "^3.9.0"
   },
   "_moduleAliases": {
-    "@Config": "./dist/Config",
-    "@Core": "./dist/Core",
-    "@Services": "./dist/Services"
+    "~": "./dist/src"
   }
 }
