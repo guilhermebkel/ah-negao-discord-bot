@@ -15,7 +15,7 @@ class Discord {
 	}
 
 	static login(): void {
-		Discord.client.login(discordConfig.botClientSecret)
+		Discord.client.login(discordConfig.botToken)
 	}
 
 	static async onReady(): Promise<void> {

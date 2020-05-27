@@ -1,4 +1,4 @@
 export default {
-	botClientSecret: process.env.BOT_CLIENT_SECRET,
+	botToken: process.env.DISCORD_BOT_TOKEN,
 	channelName: process.env.DISCORD_CHANNEL_NAME
 }
