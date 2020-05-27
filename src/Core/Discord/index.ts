@@ -1,6 +1,6 @@
 import * as discord from "discord.js"
 
-import DiscordService from "~/Services/Discord"
+import ListenerService from "~/Services/Listener"
 
 import discordConfig from "~/Config/discord"
 
@@ -27,7 +27,7 @@ class Discord {
 	}
 
 	static setupListeners() {
-		Discord.client.on("message", DiscordService.onMessage)
+		Discord.client.on("message", ListenerService.onMessage)
 	}
 }
 
