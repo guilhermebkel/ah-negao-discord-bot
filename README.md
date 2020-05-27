@@ -38,9 +38,9 @@ npm install
 
 5. On the aside menu, go into the **OAuth2** option and mark the following options:
 
-> On **SCOPES** table mark: **bot**
+> On **SCOPES**, mark: **bot**
 >
-> On **BOT PERMISSIONS** mark: **Send Messages, Read Message History**
+> On **BOT PERMISSIONS**, mark: **Send Messages, Read Message History**
 
 6. Use the link below **SCOPES** to add the bot to your server.
 
