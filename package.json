@@ -14,7 +14,7 @@
     "test:staged": "jest --passWithNoTests",
     "start": "node dist/index.js",
     "dev": "nodemon index.ts",
-    "build": "tsc"
+    "build": "npx tsc"
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.18",
