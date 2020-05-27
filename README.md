@@ -34,7 +34,7 @@ npm install
 
 3. Create an application on [Discord for Developers](https://discordapp.com/developers/).
 
-4. On the application settings side, click on **Bot** and create a New Bot and mark the option **Public Bot**.
+4. On the aside menu, go into the **Bot**, create a new bot and mark the option **Public Bot**.
 
 5. On the aside menu, go into the **OAuth2** option and mark the following options:
 
