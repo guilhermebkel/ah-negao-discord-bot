@@ -42,10 +42,6 @@ class DiscordService {
 
 		return (channel as any) as ChannelType
 	}
-
-	async onMessage(message: Message) {
-		console.log(message.content)
-	}
 }
 
 export default new DiscordService()
