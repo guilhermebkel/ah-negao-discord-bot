@@ -1,4 +1,4 @@
-import { Message, TextChannel, ChannelLogsQueryOptions } from "discord.js"
+import { TextChannel, ChannelLogsQueryOptions } from "discord.js"
 
 import Discord from "~/Core/Discord"
 
