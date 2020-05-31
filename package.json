@@ -53,6 +53,7 @@
   },
   "homepage": "https://github.com/guilhermebkel/node-workers-zip#readme",
   "dependencies": {
+    "@discordjs/opus": "^0.3.2",
     "@types/node-cron": "^2.0.3",
     "axios": "^0.19.2",
     "cheerio": "^1.0.0-rc.3",
@@ -63,7 +64,8 @@
     "node-cron": "^2.0.3",
     "ts-node": "^8.10.1",
     "tsconfig-paths": "^3.9.0",
-    "typescript": "^3.9.2"
+    "typescript": "^3.9.2",
+    "ytdl-core": "^2.1.5"
   },
   "_moduleAliases": {
     "~": "./dist/src"
