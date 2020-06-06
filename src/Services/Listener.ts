@@ -4,15 +4,42 @@ import youtube from "ytdl-core"
 import DownloadService from "~/Services/Download"
 
 const COMMANDS = {
-	GET_IN: "entra",
-	GET_OUT: "vaza",
-	PLAY_SONG_ON_QUEUE: "toca",
-	ADD_SONG_TO_QUEUE: "adiciona:",
-	FLUSH_SONG_QUEUE: "remove tudo",
-	SHOW_SONG_QUEUE: "mostra tudo",
-	SKIP_SONG_ON_QUEUE: "pula",
-	SHOW_ALL_COMMANDS: "comandos",
-	GENERATE_DOWNLOAD_LINK: "gera link:"
+	GET_IN: {
+		message: "entra",
+		description: "Entra na sala do usuário que chamou."
+	},
+	GET_OUT: {
+		message: "vaza",
+		description: "Sai da sala do usuário que pediu."
+	},
+	PLAY_SONG_ON_QUEUE: {
+		message: "toca",
+		description: "Começa a tocar as músicas da queue."
+	},
+	ADD_SONG_TO_QUEUE: {
+		message: "adiciona:",
+		description: "Adiciona uma nova música na queue (Ex: 'adiciona: LINK_DA_MÚSICA_NO_YOUTUBE')."
+	},
+	FLUSH_SONG_QUEUE: {
+		message: "remove tudo",
+		description: "Remove todas as músicas da queue."
+	},
+	SHOW_SONG_QUEUE: {
+		message: "mostra tudo",
+		description: "Mostra todas as músicas que estão na queue."
+	},
+	SKIP_SONG_ON_QUEUE: {
+		message: "pula",
+		description: "Pula para a próxima música da queue."
+	},
+	SHOW_ALL_COMMANDS: {
+		message: "comandos",
+		description: "Mostra todos os comandos disponíveis."
+	},
+	GENERATE_DOWNLOAD_LINK: {
+		message: "gera link:",
+		description: "Cria um link de download no servidor para o arquivo recebido. (Ex: 'gera link: LINK_DO_ARQUIVO')."
+	}
 }
 
 class ListenerService {
@@ -53,7 +80,7 @@ class ListenerService {
 	}
 
 	static async addSong(message: Message) {
-		const songUrl = message.content.split(COMMANDS.ADD_SONG_TO_QUEUE).pop().trim()
+		const songUrl = message.content.split(COMMANDS.ADD_SONG_TO_QUEUE.message).pop().trim()
 
 		ListenerService.songQueue.push(songUrl)
 
@@ -67,19 +94,19 @@ class ListenerService {
 	}
 
 	static async getSongQueueList(message: Message) {
-		message.channel.send(`LISTA DE MÚSICAS: ${ListenerService.songQueue.join(", ")}`)
+		message.channel.send(`LISTA DE MÚSICAS: ${ListenerService.songQueue.join(",\n ")}`)
 	}
 
 	static async showAllCommands(message: Message) {
-		const commands = Object.values(COMMANDS)
+		const commands = Object.values(COMMANDS).map((value) => `[${value.message}]: ${value.description}`)
 
-		message.channel.send(`LISTA DE COMANDOS: ${commands.join(", ")}`)
+		message.channel.send(["LISTA DE COMANDOS:", ...commands])
 	}
 
 	static async generateDownloadLink(message: Message) {
 		message.channel.send("CALMAE QUE VOU GERAR O NOVO LINK")
 
-		const link = message.content.split(COMMANDS.GENERATE_DOWNLOAD_LINK).pop().trim()
+		const link = message.content.split(COMMANDS.GENERATE_DOWNLOAD_LINK.message).pop().trim()
 
 		const downloadLink = await DownloadService.downloadFromLink(link)
 
@@ -94,39 +121,39 @@ class ListenerService {
 				return
 			}
 
-			if (requested(COMMANDS.GET_IN)) {
+			if (requested(COMMANDS.GET_IN.message)) {
 				ListenerService.voiceChannelConnect(message)
 			}
 
-			if (requested(COMMANDS.GET_OUT)) {
+			if (requested(COMMANDS.GET_OUT.message)) {
 				ListenerService.disconnect(message)
 			}
 
-			if (requested(COMMANDS.PLAY_SONG_ON_QUEUE)) {
+			if (requested(COMMANDS.PLAY_SONG_ON_QUEUE.message)) {
 				ListenerService.play(message)
 			}
 
-			if (requested(COMMANDS.ADD_SONG_TO_QUEUE)) {
+			if (requested(COMMANDS.ADD_SONG_TO_QUEUE.message)) {
 				ListenerService.addSong(message)
 			}
 
-			if (requested(COMMANDS.FLUSH_SONG_QUEUE)) {
+			if (requested(COMMANDS.FLUSH_SONG_QUEUE.message)) {
 				ListenerService.flushSongQueue(message)
 			}
 
-			if (requested(COMMANDS.SHOW_SONG_QUEUE)) {
+			if (requested(COMMANDS.SHOW_SONG_QUEUE.message)) {
 				ListenerService.getSongQueueList(message)
 			}
 
-			if (requested(COMMANDS.SKIP_SONG_ON_QUEUE)) {
+			if (requested(COMMANDS.SKIP_SONG_ON_QUEUE.message)) {
 				ListenerService.play(message)
 			}
 
-			if (requested(COMMANDS.SHOW_ALL_COMMANDS)) {
+			if (requested(COMMANDS.SHOW_ALL_COMMANDS.message)) {
 				ListenerService.showAllCommands(message)
 			}
 
-			if (requested(COMMANDS.GENERATE_DOWNLOAD_LINK)) {
+			if (requested(COMMANDS.GENERATE_DOWNLOAD_LINK.message)) {
 				ListenerService.generateDownloadLink(message)
 			}
 		} catch (error) {
