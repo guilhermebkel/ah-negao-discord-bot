@@ -87,46 +87,51 @@ class ListenerService {
 	}
 
 	static async onMessage(message: Message) {
-		const requested = (command: string) => message.content.includes(command)
+		try {
+			const requested = (command: string) => message.content.includes(command)
 
-		if (message.author.bot) {
-			return
-		}
+			if (message.author.bot) {
+				return
+			}
 
-		if (requested(COMMANDS.GET_IN)) {
-			ListenerService.voiceChannelConnect(message)
-		}
+			if (requested(COMMANDS.GET_IN)) {
+				ListenerService.voiceChannelConnect(message)
+			}
 
-		if (requested(COMMANDS.GET_OUT)) {
-			ListenerService.disconnect(message)
-		}
+			if (requested(COMMANDS.GET_OUT)) {
+				ListenerService.disconnect(message)
+			}
 
-		if (requested(COMMANDS.PLAY_SONG_ON_QUEUE)) {
-			ListenerService.play(message)
-		}
+			if (requested(COMMANDS.PLAY_SONG_ON_QUEUE)) {
+				ListenerService.play(message)
+			}
 
-		if (requested(COMMANDS.ADD_SONG_TO_QUEUE)) {
-			ListenerService.addSong(message)
-		}
+			if (requested(COMMANDS.ADD_SONG_TO_QUEUE)) {
+				ListenerService.addSong(message)
+			}
 
-		if (requested(COMMANDS.FLUSH_SONG_QUEUE)) {
-			ListenerService.flushSongQueue(message)
-		}
+			if (requested(COMMANDS.FLUSH_SONG_QUEUE)) {
+				ListenerService.flushSongQueue(message)
+			}
 
-		if (requested(COMMANDS.SHOW_SONG_QUEUE)) {
-			ListenerService.getSongQueueList(message)
-		}
+			if (requested(COMMANDS.SHOW_SONG_QUEUE)) {
+				ListenerService.getSongQueueList(message)
+			}
 
-		if (requested(COMMANDS.SKIP_SONG_ON_QUEUE)) {
-			ListenerService.play(message)
-		}
+			if (requested(COMMANDS.SKIP_SONG_ON_QUEUE)) {
+				ListenerService.play(message)
+			}
 
-		if (requested(COMMANDS.SHOW_ALL_COMMANDS)) {
-			ListenerService.showAllCommands(message)
-		}
+			if (requested(COMMANDS.SHOW_ALL_COMMANDS)) {
+				ListenerService.showAllCommands(message)
+			}
 
-		if (requested(COMMANDS.GENERATE_DOWNLOAD_LINK)) {
-			ListenerService.generateDownloadLink(message)
+			if (requested(COMMANDS.GENERATE_DOWNLOAD_LINK)) {
+				ListenerService.generateDownloadLink(message)
+			}
+		} catch (error) {
+			console.error(error)
+			message.channel.send("KKKKK DEU ERRO E NÃO CONSEGUI FAZER O QUE VOCẼ MANDOU")
 		}
 	}
 }
