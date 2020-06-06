@@ -77,6 +77,8 @@ class ListenerService {
 	}
 
 	static async generateDownloadLink(message: Message) {
+		message.channel.send("CALMAE QUE VOU GERAR O NOVO LINK")
+
 		const link = message.content.split(COMMANDS.GENERATE_DOWNLOAD_LINK).pop().trim()
 
 		const downloadLink = await DownloadService.downloadFromLink(link)
