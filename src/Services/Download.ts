@@ -4,6 +4,8 @@ import axios from "axios"
 
 import StreamUtil from "~/Utils/Stream"
 
+import serverConfig from "~/Config/server"
+
 class DownloadService {
 	async downloadFromLink(link: string) {
 		const metadata = await this.buildMetadata(link)
@@ -16,7 +18,7 @@ class DownloadService {
 			writeStream
 		)
 
-		return `https://ah-negao-discord-bot.s2.guilherr.me/${metadata.fileName}`
+		return `${serverConfig.url}/${metadata.fileName}`
 	}
 
 	async buildMetadata(link: string) {
