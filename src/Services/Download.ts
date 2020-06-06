@@ -29,7 +29,7 @@ class DownloadService {
 
 		const size = headers["content-length"]
 		const contentType = headers["content-type"]
-		const fileName = slugify(headers["content-disposition"].split("filename").pop().replace(/"/g, ""))
+		const fileName = slugify(link.split("/").pop())
 
 		return {
 			size,
