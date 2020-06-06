@@ -1,6 +1,7 @@
 import fs from "fs"
 import request from "request"
 import axios from "axios"
+import slugify from "slugify"
 
 import StreamUtil from "~/Utils/Stream"
 
@@ -26,10 +27,14 @@ class DownloadService {
 
 		const { headers } = response
 
+		const size = headers["content-length"]
+		const contentType = headers["content-type"]
+		const fileName = slugify(headers["content-disposition"].split("filename").pop().replace(/"/g, ""))
+
 		return {
-			size: headers["content-length"],
-			contentType: headers["content-type"],
-			fileName: headers["content-disposition"].split("filename=").pop().replace(/"/g, "")
+			size,
+			contentType,
+			fileName
 		}
 	}
 }
