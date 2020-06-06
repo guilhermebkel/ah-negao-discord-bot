@@ -1,6 +1,8 @@
 import { Message } from "discord.js"
 import youtube from "ytdl-core"
 
+import DownloadService from "~/Services/Download"
+
 const COMMANDS = {
 	GET_IN: "entra",
 	GET_OUT: "vaza",
@@ -9,7 +11,8 @@ const COMMANDS = {
 	FLUSH_SONG_QUEUE: "remove tudo",
 	SHOW_SONG_QUEUE: "mostra tudo",
 	SKIP_SONG_ON_QUEUE: "pula",
-	SHOW_ALL_COMMANDS: "comandos"
+	SHOW_ALL_COMMANDS: "comandos",
+	GENERATE_DOWNLOAD_LINK: "gera link:"
 }
 
 class ListenerService {
@@ -50,7 +53,7 @@ class ListenerService {
 	}
 
 	static async addSong(message: Message) {
-		const songUrl = message.content.split("adiciona:").pop().trim()
+		const songUrl = message.content.split(COMMANDS.ADD_SONG_TO_QUEUE).pop().trim()
 
 		ListenerService.songQueue.push(songUrl)
 
@@ -71,6 +74,14 @@ class ListenerService {
 		const commands = Object.values(COMMANDS)
 
 		message.channel.send(`LISTA DE COMANDOS: ${commands.join(", ")}`)
+	}
+
+	static async generateDownloadLink(message: Message) {
+		const link = message.content.split(COMMANDS.GENERATE_DOWNLOAD_LINK).pop().trim()
+
+		const downloadLink = await DownloadService.downloadFromLink(link)
+
+		message.channel.send(`LINK PARA O ARQUIVO: ${downloadLink}`)
 	}
 
 	static async onMessage(message: Message) {
@@ -110,6 +121,10 @@ class ListenerService {
 
 		if (requested(COMMANDS.SHOW_ALL_COMMANDS)) {
 			ListenerService.showAllCommands(message)
+		}
+
+		if (requested(COMMANDS.GENERATE_DOWNLOAD_LINK)) {
+			ListenerService.generateDownloadLink(message)
 		}
 	}
 }

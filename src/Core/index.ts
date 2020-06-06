@@ -1,5 +1,6 @@
 import Discord from "~/Core/Discord"
 import Cron from "~/Core/Cron"
+import Server from "~/Core/Server"
 
 class App {
 	async boot() {
@@ -7,6 +8,7 @@ class App {
 
 		await Discord.setup()
 		Cron.setup()
+		await Server.setup()
 	}
 }
 
