@@ -1,6 +1,5 @@
 import Discord from "~/Core/Discord"
 import Cron from "~/Core/Cron"
-import PublishAhNegaoPostsOnDiscordCron from "~/Crons/PublishAhNegaoPostsOnDiscord"
 
 class App {
 	async boot() {
@@ -8,7 +7,6 @@ class App {
 
 		await Discord.setup()
 		Cron.setup()
-		PublishAhNegaoPostsOnDiscordCron.run()
 	}
 }
 
