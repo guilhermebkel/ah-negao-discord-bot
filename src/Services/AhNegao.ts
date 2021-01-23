@@ -62,7 +62,7 @@ class AhNegaoService {
 		return pageUrl
 	}
 
-	private parseArticle(article: CheerioElement): AhNegaoPost {
+	private parseArticle(article: any): AhNegaoPost {
 		const post: AhNegaoPost = {
 			title: "",
 			url: "",
@@ -78,9 +78,9 @@ class AhNegaoService {
 		const date = rawDate?.children?.[0]?.data
 
 		const rawContent = WebScrapService.getElementByClassName(article, "entry-content")
-		const contents: CheerioElement[] = rawContent?.children
-			?.filter((child) => child.name === "p")
-			?.reduce((children, child) => [...children, ...child?.children], [])
+		const contents: any = rawContent?.children
+			?.filter((child: any) => child.name === "p")
+			?.reduce((children: any, child: any) => [...children, ...child?.children], [])
 
 		if (title) {
 			post.title = title

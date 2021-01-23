@@ -12,8 +12,11 @@ class WebScrapService {
 		return cheerio.load(pageData)
 	}
 
-	getElementByClassName(currentElement: CheerioElement, selectedClass: string) {
-		let selectedElement: CheerioElement
+	/**
+	 * @param currentElement CheerioElementInstance
+	 */
+	getElementByClassName(currentElement: any, selectedClass: string) {
+		let selectedElement: any
 
 		const currentElementClasses = currentElement?.attribs?.class || ""
 
