@@ -1,60 +1,128 @@
 import WebScrapService from "~/Services/WebScrap"
 
-import TypeUtil from "~/Utils/Type"
 import LinkUtil from "~/Utils/Link"
+import TimeUtil from "~/Utils/Time"
 
 import ahNegaoConfig from "~/Config/ah-negao"
 
+import { AhNegaoPost, GetPagePostDataResponse } from "~/Interfaces/AhNegao"
+
 class AhNegaoService {
-	async getPagePostAttachmentUrls(page = 1): Promise<string[]> {
-		const pageUrl = `${ahNegaoConfig.pageBaseUrl}${page}`
+	async getTodayPagePosts(): Promise<AhNegaoPost[]> {
+		const todayDay = new Date().getDate()
+		let postUpperDay: number = todayDay
 
-		const pageData = await WebScrapService.getPageContent(pageUrl)
+		let todayPagePostData: AhNegaoPost[] = []
 
-		const scraper = WebScrapService.getScraper(pageData)
+		for (let page = 1; todayDay === postUpperDay; page++) {
+			const pagePostData = await this.getPagePostData(page)
 
-		const rawPostAttachments = scraper(".in p").toArray()
+			todayPagePostData = [
+				...todayPagePostData,
+				...pagePostData.posts
+			]
 
-		const attachmentUrls = []
+			postUpperDay = pagePostData.postsUpperDate.getDate()
+		}
 
-		rawPostAttachments.forEach((attachment) => {
-			attachment.children.forEach((attachmentChild) => {
-				if (attachmentChild.name === "iframe" || attachmentChild.name === "img") {
-					const url = LinkUtil.formatLink(attachmentChild?.attribs?.src)
-
-					attachmentUrls.push(url)
-				}
-			})
-		})
-
-		return attachmentUrls
+		return todayPagePostData
 	}
 
-	/**
-	 * Gets the max day of a post page
-	 */
-	async getPagePostsUpperDay(page = 1): Promise<number> {
-		let day = 0
-
-		const pageUrl = `${ahNegaoConfig.pageBaseUrl}${page}`
+	async getPagePostData(page = 1): Promise<GetPagePostDataResponse> {
+		const pageUrl = this.getPageUrl(page)
 
 		const pageData = await WebScrapService.getPageContent(pageUrl)
 
 		const scraper = WebScrapService.getScraper(pageData)
 
-		const rawPagePostDays = scraper(".dia").toArray()
+		const rawArticles = scraper("article").toArray()
 
-		rawPagePostDays.forEach((pagePostDay) => {
-			pagePostDay.children.forEach((pagePostDayChild) => {
-				const isValidNumber = TypeUtil.isNumber(pagePostDayChild?.data)
+		const pagePostData: GetPagePostDataResponse = {
+			posts: [],
+			postsUpperDate: null
+		}
 
-				if (isValidNumber && +pagePostDayChild?.data > day) {
-					day = +pagePostDayChild?.data
-				}
-			})
+		rawArticles.forEach((rawArticle) => {
+			const post = this.parseArticle(rawArticle)
+
+			pagePostData.posts.push(post)
 		})
 
-		return day
+		const postDatesInMilliseconds = pagePostData.posts.map((post) => +post.date)
+		const greaterPostDateInMilliseconds = Math.max(...postDatesInMilliseconds)
+
+		pagePostData.postsUpperDate = new Date(greaterPostDateInMilliseconds)
+
+		return pagePostData
+	}
+
+	private getPageUrl(page: number): string {
+		const pageUrl = `${ahNegaoConfig.pageBaseUrl}${page}`
+
+		return pageUrl
+	}
+
+	private parseArticle(article: CheerioElement): AhNegaoPost {
+		const post: AhNegaoPost = {
+			title: "",
+			url: "",
+			date: null,
+			contents: []
+		}
+
+		const rawTitle = WebScrapService.getElementByClassName(article, "entry-title")
+		const title = rawTitle?.children?.[0]?.children?.[0]?.data
+		const url = rawTitle?.children?.[0]?.attribs?.href
+
+		const rawDate = WebScrapService.getElementByClassName(article, "published")
+		const date = rawDate?.children?.[0]?.data
+
+		const rawContent = WebScrapService.getElementByClassName(article, "entry-content")
+		const contents: CheerioElement[] = rawContent?.children
+			?.filter((child) => child.name === "p")
+			?.reduce((children, child) => [...children, ...child?.children], [])
+
+		if (title) {
+			post.title = title
+		}
+
+		if (url) {
+			post.url = url
+		}
+
+		if (date) {
+			post.date = TimeUtil.parseBrazilianDate(date)
+		}
+
+		if (contents) {
+			contents.forEach((content) => {
+				const name = content?.name
+				const type = content?.type
+
+				const isEmbed = name === "iframe"
+				const isImage = name === "img"
+
+				if (isEmbed || isImage) {
+					const contentUrl = LinkUtil.formatLink(content?.attribs?.src)
+
+					post.contents.push({
+						type: isImage ? "image" : "embed",
+						value: contentUrl
+					})
+				}
+
+				if (type === "text") {
+					const text = content?.data
+
+					post.contents.push({
+						type: "text",
+						value: text
+					})
+				}
+			})
+		}
+
+		return post
 	}
 }
 

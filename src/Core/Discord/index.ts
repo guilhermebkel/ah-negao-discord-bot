@@ -1,7 +1,5 @@
 import * as discord from "discord.js"
 
-import ListenerService from "~/Services/Listener"
-
 import discordConfig from "~/Config/discord"
 
 class Discord {
@@ -9,7 +7,6 @@ class Discord {
 
 	static async setup() {
 		Discord.login()
-		Discord.setupListeners()
 		await Discord.onReady()
 		console.log("Discord Bot is online...")
 	}
@@ -24,10 +21,6 @@ class Discord {
 
 	static get client() {
 		return Discord._client
-	}
-
-	static setupListeners() {
-		Discord.client.on("message", ListenerService.onMessage)
 	}
 }
 

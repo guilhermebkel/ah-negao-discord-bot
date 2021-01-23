@@ -1,5 +1,8 @@
+
 import AhNegaoService from "~/Services/AhNegao"
 import DiscordService from "~/Services/Discord"
+
+import TimeUtil from "~/Utils/Time"
 
 import { Cron } from "~/Interfaces/Cron"
 
@@ -13,33 +16,36 @@ class PublishAhNegaoPostsOnDiscordCron implements Cron {
 	async run(): Promise<void> {
 		const { channelName } = discordConfig
 
-		const todayDay = new Date().getDate()
-		let postUpperDay = todayDay
-
 		const messages = await DiscordService.getChannelMessages(
 			channelName,
 			{ limit: 100 }
 		)
 
-		let todayAttachmentUrls: string[] = []
-
-		for (let page = 1; todayDay === postUpperDay; page++) {
-			const attachmentUrls = await AhNegaoService.getPagePostAttachmentUrls(page)
-
-			todayAttachmentUrls = [
-				...todayAttachmentUrls,
-				...attachmentUrls
-			]
-
-			postUpperDay = await AhNegaoService.getPagePostsUpperDay(page)
-		}
+		const todayPagePostData = await AhNegaoService.getTodayPagePosts()
 
 		// eslint-disable-next-line
-		for (const attachmentUrl of todayAttachmentUrls) {
-			const isAttachmentPublishedOnDiscord = messages.includes(attachmentUrl)
+		for (const pagePostData of todayPagePostData) {
+			const messageEmbeds = messages.reduce((embeds, message) => [...embeds, ...message.embeds], [])
 
-			if (!isAttachmentPublishedOnDiscord) {
-				await DiscordService.sendChannelMessage(channelName, attachmentUrl)
+			const isPagePostDataPublishedOnDiscord = messageEmbeds.some((messageEmbed) => (
+				messageEmbed.title === pagePostData.title
+			))
+
+			if (!isPagePostDataPublishedOnDiscord) {
+				const embedMessage = DiscordService.buildEmbedMessage({
+					author: TimeUtil.buildBrazilianDate(pagePostData.date),
+					title: pagePostData.title,
+					url: pagePostData.url
+				})
+
+				const contentMessages = pagePostData.contents.map((content) => content.value)
+
+				const scheduledMessages = [
+					embedMessage,
+					...contentMessages
+				]
+
+				await DiscordService.sendBatchChannelMessage(channelName, scheduledMessages)
 			}
 		}
 	}
