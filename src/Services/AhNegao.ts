@@ -15,7 +15,9 @@ class AhNegaoService {
 		let todayPagePostData: AhNegaoPost[] = []
 
 		for (let page = 1; todayDay === postUpperDay; page++) {
-			const pagePostData = await this.getPagePostData(page)
+			const pageUrl = this.getPageUrl(page)
+
+			const pagePostData = await this.getPagePostData(pageUrl)
 
 			todayPagePostData = [
 				...todayPagePostData,
@@ -28,9 +30,7 @@ class AhNegaoService {
 		return todayPagePostData
 	}
 
-	async getPagePostData(page = 1): Promise<GetPagePostDataResponse> {
-		const pageUrl = this.getPageUrl(page)
-
+	async getPagePostData(pageUrl: string): Promise<GetPagePostDataResponse> {
 		const pageData = await WebScrapService.getPageContent(pageUrl)
 
 		const scraper = WebScrapService.getScraper(pageData)
@@ -42,11 +42,13 @@ class AhNegaoService {
 			postsUpperDate: null
 		}
 
-		rawArticles.forEach((rawArticle) => {
-			const post = this.parseArticle(rawArticle)
+		await Promise.all(
+			rawArticles.map(async (rawArticle) => {
+				const post = await this.parseArticle(rawArticle)
 
-			pagePostData.posts.push(post)
-		})
+				pagePostData.posts.push(post)
+			})
+		)
 
 		const postDatesInMilliseconds = pagePostData.posts.map((post) => +post.date)
 		const greaterPostDateInMilliseconds = Math.max(...postDatesInMilliseconds)
@@ -62,7 +64,7 @@ class AhNegaoService {
 		return pageUrl
 	}
 
-	private parseArticle(article: any): AhNegaoPost {
+	private async parseArticle(article: any): Promise<AhNegaoPost> {
 		const post: AhNegaoPost = {
 			title: "",
 			url: "",
@@ -77,11 +79,6 @@ class AhNegaoService {
 		const rawDate = WebScrapService.getElementByClassName(article, "published")
 		const date = rawDate?.children?.[0]?.data
 
-		const rawContent = WebScrapService.getElementByClassName(article, "entry-content")
-		const contents: any = rawContent?.children
-			?.filter((child: any) => child.name === "p")
-			?.reduce((children: any, child: any) => [...children, ...child?.children], [])
-
 		if (title) {
 			post.title = title
 		}
@@ -94,32 +91,55 @@ class AhNegaoService {
 			post.date = TimeUtil.parseBrazilianDate(date)
 		}
 
-		if (contents) {
-			contents.forEach((content) => {
-				const name = content?.name
-				const type = content?.type
+		/**
+		 * It means the current article is so big that we has to go inside it
+		 * in order to get all content, since we are dealing only with a little
+		 * amount here.
+		 */
+		const isThereAnySeeMoreButton = WebScrapService.getElementByClassName(article, "ast-the-content-more-link")
 
-				const isEmbed = name === "iframe"
-				const isImage = name === "img"
+		if (isThereAnySeeMoreButton) {
+			const fullArticlePagePostData = await this.getPagePostData(url)
 
-				if (isEmbed || isImage) {
-					const contentUrl = LinkUtil.formatLink(content?.attribs?.src)
+			const [fullArticlePost] = fullArticlePagePostData.posts
 
-					post.contents.push({
-						type: isImage ? "image" : "embed",
-						value: contentUrl
-					})
-				}
+			post.contents = fullArticlePost.contents
+		} else {
+			const rawContent = WebScrapService.getElementByClassName(article, "entry-content")
+			const contents: any = rawContent?.children
+				?.filter((child: any) => child.name === "p")
+				?.reduce((children: any, child: any) => [...children, ...child?.children], [])
 
-				if (type === "text") {
-					const text = content?.data
+			if (contents) {
+				contents.forEach((content: any) => {
+					const name = content?.name
+					const type = content?.type
+					const src = content?.attribs?.src
+					const data = content?.data
 
-					post.contents.push({
-						type: "text",
-						value: text
-					})
-				}
-			})
+					const isEmbed = name === "iframe"
+					const isImage = name === "img"
+					const isText = type === "text" && data?.length > 1
+
+					if (isEmbed || isImage) {
+						const contentUrl = LinkUtil.formatLink(src)
+
+						post.contents.push({
+							type: isImage ? "image" : "embed",
+							value: contentUrl
+						})
+					}
+
+					if (isText) {
+						const text = data
+
+						post.contents.push({
+							type: "text",
+							value: text
+						})
+					}
+				})
+			}
 		}
 
 		return post
