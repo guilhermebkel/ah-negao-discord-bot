@@ -22,6 +22,10 @@ AhNegaoDiscordBot uses web scraping in order to fetch the posts of current day f
 ## 🔧 Technologies
 
 - Typescript
+- Cheerio
+- DiscordJS
+- NodeCron
+
 
 ## 🚀 Getting started
 
