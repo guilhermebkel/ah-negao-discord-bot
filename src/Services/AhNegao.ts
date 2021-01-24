@@ -92,7 +92,7 @@ class AhNegaoService {
 		}
 
 		/**
-		 * It means the current article is so big that we has to go inside it
+		 * It means the current article is so big that we have to go inside it
 		 * in order to get all content, since we are dealing only with a little
 		 * amount here.
 		 */
