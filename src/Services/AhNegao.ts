@@ -69,7 +69,6 @@ class AhNegaoService {
 	}
 
 	wasPostProcessed(post: AhNegaoPost): boolean {
-		console.log(this.processedPosts)
 		const wasPostProcessed = this.processedPosts.some((processedPost) => (
 			processedPost.title === post.title
 		))
