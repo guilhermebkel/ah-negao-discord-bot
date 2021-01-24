@@ -8,6 +8,8 @@ import ahNegaoConfig from "~/Config/ah-negao"
 import { AhNegaoPost, GetPagePostDataResponse } from "~/Interfaces/AhNegao"
 
 class AhNegaoService {
+	private processedPosts: AhNegaoPost[] = []
+
 	async getTodayPagePosts(): Promise<AhNegaoPost[]> {
 		const todayDay = new Date().getDate()
 		let postUpperDay: number = todayDay
@@ -19,9 +21,13 @@ class AhNegaoService {
 
 			const pagePostData = await this.getPagePostData(pageUrl)
 
+			const todayPosts = pagePostData.posts.filter((post) => (
+				post.date.getDate() === todayDay
+			))
+
 			todayPagePostData = [
 				...todayPagePostData,
-				...pagePostData.posts
+				...todayPosts
 			]
 
 			postUpperDay = pagePostData.postsUpperDate.getDate()
@@ -56,6 +62,19 @@ class AhNegaoService {
 		pagePostData.postsUpperDate = new Date(greaterPostDateInMilliseconds)
 
 		return pagePostData
+	}
+
+	set processedPost(post: AhNegaoPost) {
+		this.processedPosts.push(post)
+	}
+
+	wasPostProcessed(post: AhNegaoPost): boolean {
+		console.log(this.processedPosts)
+		const wasPostProcessed = this.processedPosts.some((processedPost) => (
+			processedPost.title === post.title
+		))
+
+		return wasPostProcessed
 	}
 
 	private getPageUrl(page: number): string {

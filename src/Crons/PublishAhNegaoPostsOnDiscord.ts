@@ -31,21 +31,30 @@ class PublishAhNegaoPostsOnDiscordCron implements Cron {
 				messageEmbed.title === pagePostData.title
 			))
 
-			if (!isPagePostDataPublishedOnDiscord) {
+			const pagePostDataWasPreviouslyProcessed = AhNegaoService.wasPostProcessed(pagePostData)
+
+			const isDuplicatedPost = (
+				isPagePostDataPublishedOnDiscord
+				|| pagePostDataWasPreviouslyProcessed
+			)
+
+			if (!isDuplicatedPost) {
 				const embedMessage = DiscordService.buildEmbedMessage({
 					author: TimeUtil.buildBrazilianDate(pagePostData.date),
 					title: pagePostData.title,
 					url: pagePostData.url
 				})
 
-				const contentMessages = pagePostData.contents.map((content) => content.value)
+				const messagesContent = pagePostData.contents.map((content) => content.value)
 
 				const scheduledMessages = [
 					embedMessage,
-					...contentMessages
+					...messagesContent
 				]
 
 				await DiscordService.sendBatchChannelMessage(channelName, scheduledMessages)
+
+				AhNegaoService.processedPost = pagePostData
 			}
 		}
 	}
