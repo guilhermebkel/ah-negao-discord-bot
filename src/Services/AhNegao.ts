@@ -21,9 +21,12 @@ class AhNegaoService {
 
 			const pagePostData = await this.getPagePostData(pageUrl)
 
-			const todayPosts = pagePostData.posts.filter((post) => (
-				post.date.getDate() === todayDay
-			))
+			const todayPosts = pagePostData.posts.filter((post) => {
+				console.log(`Post Day: ${post.date.getDate()} / Today Day: ${todayDay}`,)
+				return (
+					post.date.getDate() === todayDay
+				)
+			})
 
 			todayPagePostData = [
 				...todayPagePostData,
