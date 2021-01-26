@@ -11,22 +11,24 @@ class AhNegaoService {
 	private processedPosts: AhNegaoPost[] = []
 
 	async getTodayPagePosts(): Promise<AhNegaoPost[]> {
-		const todayDay = new Date().getDate()
+		/**
+		 * We make it minus 1 since the date on some servers
+		 * date does not match the bot one. So, that way
+		 * we are able to filter the posts from yesterday to today.
+		 */
+		const todayDay = new Date().getDate() - 1
 		let postUpperDay: number = todayDay
 
 		let todayPagePostData: AhNegaoPost[] = []
 
-		for (let page = 1; todayDay === postUpperDay; page++) {
+		for (let page = 1; postUpperDay >= todayDay; page++) {
 			const pageUrl = this.getPageUrl(page)
 
 			const pagePostData = await this.getPagePostData(pageUrl)
 
-			const todayPosts = pagePostData.posts.filter((post) => {
-				console.log(`Post Day: ${post.date.getDate()} / Today Day: ${todayDay}`,)
-				return (
-					post.date.getDate() === todayDay
-				)
-			})
+			const todayPosts = pagePostData.posts.filter((post) => (
+				post.date.getDate() >= todayDay
+			))
 
 			todayPagePostData = [
 				...todayPagePostData,
