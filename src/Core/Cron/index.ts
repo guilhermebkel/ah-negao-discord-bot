@@ -4,6 +4,7 @@ import crons from "~/Crons"
 
 class Cron {
 	setup() {
+		crons[0].run()
 		crons.forEach((cron) => {
 			nodeCron.schedule(cron.schedule, async () => {
 				console.log(`[cron][${cron.name}] Running...`)

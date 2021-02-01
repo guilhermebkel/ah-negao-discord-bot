@@ -11,12 +11,14 @@ class AhNegaoService {
 	private processedPosts: AhNegaoPost[] = []
 
 	async getTodayPagePosts(): Promise<AhNegaoPost[]> {
+		const todayDate = new Date()
+
 		/**
 		 * We make it minus 1 since the date on some servers
 		 * date does not match the bot one. So, that way
 		 * we are able to filter the posts from yesterday to today.
 		 */
-		const todayDay = new Date().getDate() - 1
+		const todayDay = todayDate.getDate() - 1
 		let postUpperDay: number = todayDay
 
 		let todayPagePostData: AhNegaoPost[] = []
@@ -25,6 +27,17 @@ class AhNegaoService {
 			const pageUrl = this.getPageUrl(page)
 
 			const pagePostData = await this.getPagePostData(pageUrl)
+
+			const todayMonth = todayDate.getMonth()
+
+			/**
+			 * We only process the data if it was created on the same month that today,
+			 * it helps avoiding infinite loops due to a large amount of different days
+			 * that a day in a month can have to another.
+			 */
+			if (todayMonth !== pagePostData.postsUpperDate.getMonth()) {
+				break
+			}
 
 			const todayPosts = pagePostData.posts.filter((post) => (
 				post.date.getDate() >= todayDay
