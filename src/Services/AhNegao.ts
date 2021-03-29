@@ -141,17 +141,17 @@ class AhNegaoService {
 
 			post.contents = fullArticlePost.contents
 		} else {
-			const rawContent = WebScrapService.getElementByClassName(article, "entry-content")
-			const contents: any = rawContent?.children
+			const rawEntryContent = WebScrapService.getElementByClassName(article, "entry-content")
+			const entryContents: any = rawEntryContent?.children
 				?.filter((child: any) => child.name === "p")
 				?.reduce((children: any, child: any) => [...children, ...child?.children], [])
 
-			if (contents) {
-				contents.forEach((content: any) => {
-					const name = content?.name
-					const type = content?.type
-					const src = content?.attribs?.src
-					const data = content?.data
+			if (entryContents) {
+				entryContents.forEach((entryContent: any) => {
+					const name = entryContent?.name
+					const type = entryContent?.type
+					const src = entryContent?.attribs?.src
+					const data = entryContent?.data
 
 					const isEmbed = name === "iframe"
 					const isImage = name === "img"
@@ -172,6 +172,28 @@ class AhNegaoService {
 						post.contents.push({
 							type: "text",
 							value: text
+						})
+					}
+				})
+			}
+
+			const rawGalleryContent = WebScrapService.getElementByClassName(article, "gallery")
+			const galleryContents: any = rawGalleryContent?.children
+				?.filter((child: any) => child.name === "figure")
+				?.reduce((children: any, child: any) => [...children, ...child?.children], [])
+
+			if (galleryContents) {
+				galleryContents.forEach((galleryContent: any) => {
+					const img = galleryContent?.children?.find((content: any) => content?.name === "img")
+
+					if (img) {
+						const src = img?.attribs?.src
+
+						const contentUrl = LinkUtil.formatLink(src)
+
+						post.contents.push({
+							type: "image",
+							value: contentUrl
 						})
 					}
 				})
